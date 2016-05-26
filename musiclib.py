@@ -1,5 +1,33 @@
+# Import Statements
 import time
+import pickle
+import os
+import sys
 
+# Resource Handling Functions
+def get_albums_from_file(pkl_file_name) :
+    album_list = None
+    try :
+        # attempt to find old data file and load album list
+        file_path = os.path.join(os.getcwd(), 'data', pkl_file_name)
+        with open(file_path, 'rb') as input_file :
+            album_list = pickle.load(input_file)
+    except IOError as err :
+        # no data file found, create new list
+        album_list = []
+    return album_list
+
+def save_albums_to_file(pkl_file_name, album_list) :
+    # Clear data file or old list and save current list
+    file_path = os.path.join(os.getcwd(), 'data', pkl_file_name)
+    try :
+        with open(file_path, 'wb') as output_file :
+            pickle.dump(album_list, output_file, pickle.HIGHEST_PROTOCOL)
+    except IOError as err:
+        print err
+        sys.exit(1)
+        
+# Class Definitions
 class Album(object) :
 
     def __init__(self, artist, title, year) :
@@ -69,10 +97,6 @@ def main() :
     albs_coll.add_album(Album('Beatles', 'Sgt. Pepper', 1967))
     albums_sorted = albs_coll.get_sorted_albums(Album_Collection.TITLE_SEARCH)
     for album in albums_sorted :
-        album.to_string()
-    print '=' * 20
-    albs_coll.albums.sort(key=lambda x: x.year)
-    for album in albs_coll.albums :
         album.to_string()
 
 if __name__ == "__main__" :
